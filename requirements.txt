@@ -1,0 +1,17 @@
+numpy
+pandas
+scikit-learn
+streamlit
+PyPDF2
+nltk
+python-docx
+python-dotenv
+google-generativeai
+pdf2image
+sentence_transformers
+PyMuPDF
+spacy
+langchain
+langchain_community
+openai
+boto3
