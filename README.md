@@ -21,7 +21,7 @@ A Streamlit-based Hiring Assistant Chatbot that leverages AWS Bedrock’s LLaMA 
 
 1. Clone the repository:
 ```
-git clone https://github.com/yourusername/resume-screening-chatbot.git
+gh repo clone Prinaka/Resume-Screening-and-Technical-Assessment-System
 cd resume-screening-chatbot
 ```
 
