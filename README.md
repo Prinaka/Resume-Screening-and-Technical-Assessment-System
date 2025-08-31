@@ -1,4 +1,4 @@
-# Hiring-Assistant-
+# Resume Screening and Technical Assessment System
 
 A Streamlit-based Hiring Assistant Chatbot that leverages AWS Bedrock’s LLaMA 3 model to parse resumes, extract candidate information, generate technical questions based on the candidate's tech stack, and evaluate answers in real-time. This tool is ideal for automating the initial stages of technical recruitment.
 
