@@ -1,26 +1,22 @@
 import streamlit as st
 import re
 import PyPDF2
-import boto3
-import json
+import os
+from openai import OpenAI
+from dotenv import load_dotenv
 
-
-bedrock = boto3.client("bedrock-runtime", region_name="us-east-1")
-
+load_dotenv()
 
 def call_llama(prompt):
-    response = bedrock.invoke_model(
-        modelId="meta.llama3-8b-instruct-v1:0",
-        body=json.dumps({
-            "prompt": prompt,
-            "max_gen_len": 512,
-            "temperature": 0.7,
-            "top_p": 0.9
-        })
-    )
-    result = json.loads(response["body"].read())
-    return result["generation"]
-
+    client = OpenAI(
+        base_url="https://router.huggingface.co/v1",
+        api_key=os.environ["HF_TOKEN"],
+        )
+    response = client.chat.completions.create(
+        model="meta-llama/Llama-3.1-8B-Instruct",
+        messages=[{"role": "user","content": prompt}],
+        )
+    return response.choices[0].message.content
 
 def extract_text_from_pdf(uploaded_file):
     pdf_reader = PyPDF2.PdfReader(uploaded_file)
@@ -73,109 +69,80 @@ def clean_info(info):
     return candidate_info
 
 
-def generate_technical_questions(tech_stack):
+def generate_technical_questions(tech_stack, q_number):
     prompt = f"""
-    Based on {tech_stack}, generate only 10 technical interview questions to assess their proficiency.
-    Example format:
-    "question 1 : What is nltk library used for?",
-    "question 2 : What is the purpose of the matplotlib.pyplot.show() function?",
-    "question 3 : What is the difference between scikit-learn's LinearRegression and LogisticRegression classes?",
-    "question 4 : What is the purpose of the tf.data.Dataset class in TensorFlow?",
-    "question 5 : What is the difference between pandas.DataFrame and pandas.Series"
+    You are an expert technical interviewer. This is question number {q_number}.
+    Ask one technical, concise interview question about the given tech stack: {tech_stack}.
+    Wait for the answer before moving to the next question.
+    Do not repeat "first question", "second question", or similar intros — just directly ask the question.
     """
     return call_llama(prompt)
 
 
-def clean_ques(qna):
-    qna = re.sub(r"^\s*[-*]\s*", "", qna, flags=re.MULTILINE)
-    qna = re.sub(r"[^a-zA-Z0-9\s@.?+()_=':]", "", qna, flags=re.MULTILINE)
-    qna = qna.splitlines()
-    key = "QUESTIONS ="
-    start_idx = 0
-    for line in qna:
-        if key in line.strip() or key.lower() in line.strip() or key.title() in line.strip():
-            start_idx = qna.index(line)+1
-            break
-    candidate_qna = []
-    for i in range(10):
-        ques = re.sub(r"^\d+.", "", qna[start_idx].strip())
-        candidate_qna.append(ques.strip())
-        start_idx += 1
-    return candidate_qna
-
-
-def is_answer_relevant(question, user_answer):
-    prompt = f"""
-    You are a strict evaluator for a technical quiz. Your task is to check if the candidate’s answer is relevant.
-    Question: "{question}"
-    Candidate's answer: "{user_answer}"
-    Output format (must be valid JSON only, nothing else):
-    {{
-    "result": "Relevant" | "Not Relevant"
-    }}
-    Rules:
-    - If the answer is relevant → respond only with: Relevant
-    - If the answer is irrelevant and nonsense → respond only with: Not Relevant
-    - Do not add punctuation, emojis, or explanations
-    """
-    raw_response = call_llama(prompt).strip()
-    try:
-        parsed = json.loads(raw_response)
-        result = parsed.get("result", "Not Relevant")
-    except json.JSONDecodeError:
-        result = "Relevant"  
-    return result
-
-
 def main():
-    st.title("Resume Screening Chatbot")
-    st.write("Hello! I am the Hiring Assistant at TalentScout. Please upload your resume below to proceed.")
-    uploaded_file = st.file_uploader("Upload your Resume (PDF)", type="pdf")
-    
-    if uploaded_file is not None:
-        text = extract_text_from_pdf(uploaded_file)
-        info = extract_candidate_info(text)
-        candidate_info = clean_info(info)
-        
-        st.subheader("Candidate Information")
-        for key in candidate_info:
-            st.write(f"{key} : {candidate_info[key]}")
+    st.title("Resume Screening and Technical Assessment System")
 
-        confirm = st.radio("Do you confirm these details are correct?", ["Yes", "No"], index=None)
-        if confirm == "Yes":
-            st.success("Thank you! Your details are confirmed.")
-            tech_stack = candidate_info["Tech Stack"]
-            if tech_stack == None:
-                tech_stack = "Python"
-            st.subheader("Technical Questions Based on Your Tech Stack")
-            qna = generate_technical_questions(tech_stack)
-            questions = clean_ques(qna)
+    if "confirmed" not in st.session_state:
+        st.session_state.confirmed = False
 
-            if "current_q" not in st.session_state:
-                st.session_state.current_q = 0
-            if "answers" not in st.session_state:
-                st.session_state.answers = {}
+    if not st.session_state.confirmed:
+        st.write("Hello! I am the Hiring Assistant at TalentScout. Please upload your resume below to proceed.")
+        uploaded_file = st.file_uploader("Upload your Resume (PDF)", type="pdf")
 
-            if st.session_state.current_q < len(questions):
-                q = questions[st.session_state.current_q]
-                st.write(q)
-                
-                user_input = st.text_input("Answer here:", key=f"answer_{st.session_state.current_q}")
-                
-                if user_input: 
-                    if is_answer_relevant(q, user_input) == "Relevant":
-                        st.success("Moving to next question.")
-                        st.session_state.answers[st.session_state.current_q] = user_input
-                        st.session_state.current_q += 1
-                        st.rerun()
-                    else:
-                        st.error("Incorrect. Please try again.")
-            else:
-                st.write("Congratulations! You have completed all the questions.")
-        elif confirm == "No":
-            st.warning("Please update your resume or enter corrections manually.")
+        if uploaded_file is not None:
+            text = extract_text_from_pdf(uploaded_file)
+            info = extract_candidate_info(text)
+            candidate_info = clean_info(info)
+
+            st.subheader("Candidate Information")
+            for key in candidate_info:
+                st.write(f"{key} : {candidate_info[key]}")
+
+            confirm = st.radio("Do you confirm these details are correct?", ["Yes", "No"], index=None)
+
+            if confirm == "Yes":
+                st.session_state.confirmed = True
+                st.session_state.candidate_info = candidate_info
+                st.session_state.tech_stack = candidate_info.get("Tech Stack", "Python")
+                st.success("Thank you! Your details are confirmed.")
+                st.rerun()
+
+            elif confirm == "No":
+                st.warning("Please update your resume or enter corrections manually.")
+
+    else:
+        tech_stack = st.session_state.tech_stack
+
+        st.subheader("Technical Questions Based on Your Tech Stack")
+
+        if "question_number" not in st.session_state:
+            st.session_state.question_number = 0
+        if "answers" not in st.session_state:
+            st.session_state.answers = []
+
+        if st.session_state.question_number < 15:
+            q_number = st.session_state.question_number + 1
+            question = generate_technical_questions(tech_stack, q_number)
+            st.write(f"Q{q_number}: {question}")
+
+            answer = st.text_area(
+                "Answer:",
+                key=f"answer_{q_number}",
+                height=150,
+                placeholder="Type your answer here..."
+            )
+
+            if st.button("Submit", key=f"submit_{q_number}"):
+                if answer.strip():
+                    st.session_state.answers.append(answer.strip())
+                    st.session_state.question_number += 1
+                    st.rerun()
+        else:
+            st.success("Congratulations! You have completed all the questions.")
+            st.write("Your Answers:")
+            for i, ans in enumerate(st.session_state.answers, 1):
+                st.write(f"Q{i}: {ans}")
 
 
 if __name__ == "__main__":
     main()
-
