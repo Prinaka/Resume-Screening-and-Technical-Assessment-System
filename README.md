@@ -1,6 +1,6 @@
 # Resume Screening and Technical Assessment System
 
-A Streamlit-based Hiring Assistant Chatbot that leverages AWS Bedrock’s LLaMA 3 model to parse resumes, extract candidate information, generate technical questions based on the candidate's tech stack, and evaluate answers in real-time. This tool is ideal for automating the initial stages of technical recruitment.
+A Streamlit-based Hiring Assistant Chatbot that leverages HuggingFace’s LLaMA 3 model to parse resumes, extract candidate information, generate technical questions based on the candidate's tech stack, and evaluate answers in real-time. This tool is ideal for automating the initial stages of technical recruitment.
 
 **Key Features:**
 
@@ -13,7 +13,7 @@ A Streamlit-based Hiring Assistant Chatbot that leverages AWS Bedrock’s LLaMA 
   - Desired Position(s)
   - Current Location
   - Tech Stack (languages, frameworks, libraries, tools)
-* Technical Question Generation: Generates 10 relevant technical questions based on the candidate's tech stack.
+* Technical Question Generation: Generates 15 relevant technical questions based on the candidate's tech stack.
 * Answer Evaluation: Evaluates candidate answers for relevance using LLaMA 3 and provides immediate feedback.
 * Interactive Workflow: Confirms candidate information before proceeding to the technical quiz.
 
@@ -35,12 +35,6 @@ venv\Scripts\activate     # Windows
 3. Install dependencies:
 ```
 pip install -r requirements.txt
-```
-
-4. Configure AWS credentials (for Bedrock access):
-```
-aws configure
-#Provide AWS Access Key, Secret Key, and default region (us-east-1)
 ```
 
 **Usage:**
