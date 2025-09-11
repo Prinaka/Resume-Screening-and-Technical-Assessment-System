@@ -1,6 +1,8 @@
 import streamlit as st
 from main import extract_text_from_pdf, extract_candidate_info, clean_info, generate_ats_score, generate_resume_review, generate_technical_questions
+import os
 
+os.environ["PYTHONWATCHDOG"] = "0"
 
 #-------Resume Screening and Technical Assessment System-----------
 st.set_page_config(page_title="TalentScout")
@@ -102,4 +104,5 @@ else:
                 st.write(f"Q{i}: {ans}")
     else:
         st.title("Select an option")
+
         st.write("Please choose one of the options above to proceed.")
