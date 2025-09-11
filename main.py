@@ -14,11 +14,10 @@ os.environ["PYTHONWATCHDOG"] = "0"
 
 @st.cache_resource  
 def load_model():
-    model_id = "meta-llama/Llama-3.1-8b-instruct"
-    quant = BitsAndBytesConfig(load_in_4bit=True)
+    model_id = "meta-llama/Llama-3.2-1B-Instruct"
     tok = AutoTokenizer.from_pretrained(model_id)
     mdl = AutoModelForCausalLM.from_pretrained(
-        model_id, device_map="auto", dtype=torch.float16, quantization_config=quant
+        model_id, device_map="auto", dtype=torch.float16
     )
     return tok, mdl
 
@@ -106,6 +105,7 @@ def generate_technical_questions(tech_stack, q_number):
     Do not repeat "first question", "second question", or similar intros — just directly ask the question.
     """
     return call_llama(prompt)
+
 
 
 
