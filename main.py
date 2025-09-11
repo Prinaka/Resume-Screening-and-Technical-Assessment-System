@@ -1,12 +1,8 @@
-import streamlit as st
 import re
 import PyPDF2
 import os
 from openai import OpenAI
-from huggingface_hub import login
 from dotenv import load_dotenv
-from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
-import torch
 
 load_dotenv()
 
@@ -111,6 +107,7 @@ def generate_technical_questions(tech_stack, q_number):
     Do not repeat "first question", "second question", or similar intros — just directly ask the question.
     """
     return call_llama2(prompt)
+
 
 
 
