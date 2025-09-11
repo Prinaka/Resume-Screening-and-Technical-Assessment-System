@@ -2,8 +2,4 @@ streamlit
 PyPDF2
 python-dotenv
 openai
-torch
-transformers
-accelerate 
-sentencepiece 
-bitsandbytes
+
