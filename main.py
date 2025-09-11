@@ -9,24 +9,31 @@ from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 import torch
 
 load_dotenv()
-login(token=st.secrets["HF_TOKEN"])
-os.environ["PYTHONWATCHDOG"] = "0" 
-
-@st.cache_resource  
-def load_model():
-    model_id = "meta-llama/Llama-3.2-1B-Instruct"
-    tok = AutoTokenizer.from_pretrained(model_id)
-    mdl = AutoModelForCausalLM.from_pretrained(
-        model_id, device_map="auto", dtype=torch.float16
-    )
-    return tok, mdl
-
-tokenizer, model = load_model()
 
 def call_llama(prompt):
-    inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
-    outputs = model.generate(**inputs, max_new_tokens=512, temperature=0.7, top_p=0.9)
-    return tokenizer.decode(outputs[0][inputs["input_ids"].shape[-1]:], skip_special_tokens=True)
+    client = OpenAI(
+        base_url="https://router.huggingface.co/v1",
+        api_key=os.environ["HF_TOKEN"],
+        )
+    response = client.chat.completions.create(
+        model="meta-llama/Llama-3.1-8B-Instruct",
+        messages=[{"role": "user","content": prompt}],
+        max_tokens=512,
+        )
+    return response.choices[0].message.content
+
+
+def call_llama2(prompt):
+    client = OpenAI(
+        base_url="https://router.huggingface.co/v1",
+        api_key=os.environ["HF_TOKEN"],
+        )
+    response = client.chat.completions.create(
+        model="meta-llama/Llama-3.1-8B-Instruct",
+        messages=[{"role": "user","content": prompt}],
+        max_tokens=128,
+        )
+    return response.choices[0].message.content
 
 
 def extract_text_from_pdf(uploaded_file):
@@ -104,7 +111,8 @@ def generate_technical_questions(tech_stack, q_number):
     Wait for the answer before moving to the next question.
     Do not repeat "first question", "second question", or similar intros — just directly ask the question.
     """
-    return call_llama(prompt)
+    return call_llama2(prompt)
+
 
 
 
