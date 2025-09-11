@@ -5,36 +5,28 @@ import os
 from openai import OpenAI
 from huggingface_hub import login
 from dotenv import load_dotenv
-from transformers import AutoTokenizer, AutoModelForCausalLM
+from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 import torch
 
 load_dotenv()
-
 login(token=st.secrets["HF_TOKEN"])
+os.environ["PYTHONWATCHDOG"] = "0" 
 
-model_id = "meta-llama/Llama-3.1-8b-instruct"
-tokenizer = AutoTokenizer.from_pretrained(model_id)
-model = AutoModelForCausalLM.from_pretrained(
-    model_id,
-    device_map="auto",       
-    torch_dtype=torch.float16,
-    load_in_4bit=True        
-)
+@st.cache_resource  
+def load_model():
+    model_id = "meta-llama/Llama-3.1-8b-instruct"
+    quant = BitsAndBytesConfig(load_in_4bit=True)
+    tok = AutoTokenizer.from_pretrained(model_id)
+    mdl = AutoModelForCausalLM.from_pretrained(
+        model_id, device_map="auto", dtype=torch.float16, quantization_config=quant
+    )
+    return tok, mdl
+
+tokenizer, model = load_model()
 
 def call_llama(prompt):
-    inputs = tokenizer.apply_chat_template(
-        prompt,
-        add_generation_prompt=True,
-        tokenize=True,
-        return_dict=True,
-        return_tensors="pt",
-    ).to(model.device)
-    outputs = model.generate(
-        **inputs,
-        max_new_tokens=512,
-        temperature=0.7,
-        top_p=0.9
-    )
+    inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
+    outputs = model.generate(**inputs, max_new_tokens=512, temperature=0.7, top_p=0.9)
     return tokenizer.decode(outputs[0][inputs["input_ids"].shape[-1]:], skip_special_tokens=True)
 
 
@@ -114,6 +106,7 @@ def generate_technical_questions(tech_stack, q_number):
     Do not repeat "first question", "second question", or similar intros — just directly ask the question.
     """
     return call_llama(prompt)
+
 
 
 
