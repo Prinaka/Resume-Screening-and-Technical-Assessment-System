@@ -12,11 +12,11 @@ load_dotenv()
 
 def call_llama(prompt):
     client = OpenAI(
-        base_url="https://router.huggingface.co/v1",
-        api_key=os.environ["HF_TOKEN"],
+        base_url="https://api.groq.com/openai/v1",
+        api_key=os.environ["GROQ_API"],
         )
     response = client.chat.completions.create(
-        model="meta-llama/Llama-3.1-8B-Instruct",
+        model="llama-3.1-8b-instant",
         messages=[{"role": "user","content": prompt}],
         max_tokens=512,
         )
@@ -25,16 +25,15 @@ def call_llama(prompt):
 
 def call_llama2(prompt):
     client = OpenAI(
-        base_url="https://router.huggingface.co/v1",
-        api_key=os.environ["HF_TOKEN"],
+        base_url="https://api.groq.com/openai/v1",
+        api_key=os.environ["GROQ_API"],
         )
     response = client.chat.completions.create(
-        model="meta-llama/Llama-3.1-8B-Instruct",
+        model="llama-3.1-8b-instant",
         messages=[{"role": "user","content": prompt}],
         max_tokens=128,
         )
     return response.choices[0].message.content
-
 
 def extract_text_from_pdf(uploaded_file):
     pdf_reader = PyPDF2.PdfReader(uploaded_file)
@@ -112,6 +111,7 @@ def generate_technical_questions(tech_stack, q_number):
     Do not repeat "first question", "second question", or similar intros — just directly ask the question.
     """
     return call_llama2(prompt)
+
 
 
 
