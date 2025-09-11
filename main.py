@@ -2,11 +2,14 @@ import re
 import PyPDF2
 import os
 from openai import OpenAI
+from huggingface_hub import login
 from dotenv import load_dotenv
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch
 
 load_dotenv()
+
+login(token=st.secrets["HF_TOKEN"])
 
 model_id = "meta-llama/Llama-3.1-8b-instruct"
 tokenizer = AutoTokenizer.from_pretrained(model_id)
@@ -110,4 +113,5 @@ def generate_technical_questions(tech_stack, q_number):
     Do not repeat "first question", "second question", or similar intros — just directly ask the question.
     """
     return call_llama(prompt)
+
 
