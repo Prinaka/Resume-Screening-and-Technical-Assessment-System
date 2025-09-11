@@ -14,22 +14,10 @@ def call_llama(prompt):
     response = client.chat.completions.create(
         model="llama-3.1-8b-instant",
         messages=[{"role": "user","content": prompt}],
-        max_tokens=512,
+        max_tokens=216,
         )
     return response.choices[0].message.content
 
-
-def call_llama2(prompt):
-    client = OpenAI(
-        base_url="https://api.groq.com/openai/v1",
-        api_key=os.environ["GROQ_API"],
-        )
-    response = client.chat.completions.create(
-        model="llama-3.1-8b-instant",
-        messages=[{"role": "user","content": prompt}],
-        max_tokens=128,
-        )
-    return response.choices[0].message.content
 
 def extract_text_from_pdf(uploaded_file):
     pdf_reader = PyPDF2.PdfReader(uploaded_file)
@@ -51,10 +39,10 @@ def extract_candidate_info(text):
     - Years of Experience 
     - Desired Position(s) 
     - Current Location 
-    - Tech Stack (include languages, frameworks, tools, software, libraries) 
+    - Tech Stack (include all languages, frameworks, tools, software, libraries mentioned in the resume) 
     Resume Text:
     {text}
-    Answer only the above points each in single line. Do not write additional statements.
+    Answer only the above points each in single sentence. Do not write additional statements.
     """
     return call_llama(prompt)
 
@@ -86,7 +74,7 @@ def generate_ats_score(candidate_info, jd_text):
     prompt = f"""
     You are a skilled ATS (Applicant Tracking System) scanner with a deep understanding of data science and ATS functionality. 
     Your task is to evaluate the resume {candidate_info} against the provided job description {jd_text}. 
-    Give me the percentage of match between the resume and job description. Do not make extra comments.
+    Give me only the percentage of match between the resume and job description. Do not write additional statements.
     """
     return call_llama(prompt)
 
@@ -106,7 +94,8 @@ def generate_technical_questions(tech_stack, q_number):
     Wait for the answer before moving to the next question.
     Do not repeat "first question", "second question", or similar intros — just directly ask the question.
     """
-    return call_llama2(prompt)
+    return call_llama(prompt)
+
 
 
 
