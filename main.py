@@ -1,3 +1,4 @@
+import streamit as st
 import re
 import PyPDF2
 import os
@@ -113,5 +114,6 @@ def generate_technical_questions(tech_stack, q_number):
     Do not repeat "first question", "second question", or similar intros — just directly ask the question.
     """
     return call_llama(prompt)
+
 
 
