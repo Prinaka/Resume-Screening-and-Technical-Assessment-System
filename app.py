@@ -1,4 +1,5 @@
 import streamlit as st
+import pandas as pd
 import plotly.express as px
 from main import extract_text_from_pdf, extract_candidate_info, clean_info, generate_ats_score, generate_resume_review, generate_technical_questions
 import os
@@ -57,7 +58,28 @@ else:
         if st.button("Take Technical Assessment"):
             st.session_state.view_mode = "technical"
             st.rerun()
-    
+            
+    def make_donut(value, label):
+        colors = (
+            ['#27AE60', '#12783D'] if value >= 80 else
+            ['#F39C12', '#875A12'] if value >= 50 else
+            ['#E74C3C', '#781F16']
+        )
+        base = pd.DataFrame({"Topic": ['', label], "%": [100 - value, value]})
+        bg = pd.DataFrame({"Topic": ['', label], "%": [100, 0]})
+        
+        def arc(data, radius=45, corner=25):
+            return alt.Chart(data).mark_arc(innerRadius=radius, cornerRadius=corner).encode(
+                theta="%", color=alt.Color("Topic:N", scale=alt.Scale(domain=[label, ''], range=colors), legend=None)
+            ).properties(width=130, height=130)
+        
+        text = alt.Chart(base).mark_text(
+            align='center', color="#29b5e8", font="Lato",
+            fontSize=32, fontWeight=700, fontStyle="italic"
+        ).encode(text=alt.value(f"{value} %"))
+        
+        return arc(bg, corner=20) + arc(base) + text
+
     # --------------------- ATS ---------------------
     if st.session_state.view_mode == "ats":
         st.title("ATS Score")
@@ -66,9 +88,9 @@ else:
             if jd.strip():
                 st.subheader("Results")
                 ats = st.write(generate_ats_score(resume_text, jd))
-                fig = px.pie(df, values=ats, names='Percentage Match')
-                fig.update_traces(hole=0.6)
-                st.plotly_chart(fig)
+                st.write(f"ATS Score: {ats}")
+                ats_val = int(ats_str.strip().replace("%", ""))
+                st.altair_chart(make_donut(ats_val, "Percentage Match"), use_container_width=False)
                 st.write(generate_resume_review(resume_text, jd))
             else:
                 st.warning("Please enter a Job Description before generating the ATS score.")
@@ -110,4 +132,5 @@ else:
         st.title("Select an option")
 
         st.write("Please choose one of the options above to proceed.")
+
 
