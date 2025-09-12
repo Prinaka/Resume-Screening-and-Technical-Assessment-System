@@ -88,9 +88,9 @@ else:
         jd = st.text_area("Job Description", key="jd", height=200, placeholder="Paste the job description here...")
         if st.button("Submit"):
             if jd.strip():
-                st.subheader("Results")
+                st.header("Results")
                 ats = generate_ats_score(candidate_info, jd)
-                st.write(f"ATS Score: {ats}")
+                st.subheader(f"ATS Score")
                 ats_val = float(ats.strip().replace("%", ""))
                 st.altair_chart(make_donut(ats_val, "Percentage Match"), use_container_width=False)
                 st.write(generate_resume_review(resume_text, jd))
@@ -134,6 +134,7 @@ else:
         st.title("Select an option")
 
         st.write("Please choose one of the options above to proceed.")
+
 
 
 
