@@ -52,7 +52,7 @@ else:
     tech_stack = st.session_state.tech_stack
 
     col1, col2, col3 = st.columns(3)
-    with col3:
+    with col1:
         if st.button("⬅Back"):
             st.session_state.confirmed = False
             st.session_state.view_mode = "initial"
@@ -141,6 +141,7 @@ else:
         st.title("Select an option")
 
         st.write("Please choose one of the options above to proceed.")
+
 
 
 
