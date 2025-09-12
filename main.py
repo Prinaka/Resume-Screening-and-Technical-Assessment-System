@@ -37,7 +37,7 @@ def extract_candidate_info(text):
     - Email Address 
     - Phone Number 
     - Years of Experience (months or years from the first position held)
-    - Position(s) (include internship or full-time positions/roles held)
+    - Position(s) (include internship or full-time positions/roles held by candidate)
     - Current Location 
     - Tech Stack (include all languages, frameworks, tools, software, libraries mentioned in the resume) 
     Resume Text:
@@ -80,8 +80,8 @@ def generate_ats_score(candidate_info, jd_text):
 
 def generate_resume_review(candidate_info, jd_text):
     prompt = f"""
-    You are an experienced Technical Human Resource Manager recruiting fresh graduates. 
-    Your task is to review the provided resume {candidate_info} against the job description {jd_text}. 
+    You are an experienced Technical Human Resource Manager recruiting fresh graduates (fresh graduates have only internship experience) 
+    Your task is to review the provided resume {candidate_info} against the skills mentioned in job description {jd_text}. 
     Output should only have strengths, weaknesses and recommendations in relation to the specified job requirements.
     """
     return call_llama(prompt)
@@ -94,6 +94,7 @@ def generate_technical_questions(tech_stack, q_number):
     Do not repeat "first question", "second question", or similar intros — just directly ask the question.
     """
     return call_llama(prompt)
+
 
 
 
