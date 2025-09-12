@@ -1,4 +1,5 @@
 import streamlit as st
+import plotly.express as px
 from main import extract_text_from_pdf, extract_candidate_info, clean_info, generate_ats_score, generate_resume_review, generate_technical_questions
 import os
 
@@ -64,7 +65,10 @@ else:
         if st.button("Submit"):
             if jd.strip():
                 st.subheader("Results")
-                st.write(generate_ats_score(resume_text, jd))
+                ats = st.write(generate_ats_score(resume_text, jd))
+                fig = px.pie(df, values=ats, names='Percentage Match')
+                fig.update_traces(hole=0.6)
+                st.plotly_chart(fig)
                 st.write(generate_resume_review(resume_text, jd))
             else:
                 st.warning("Please enter a Job Description before generating the ATS score.")
@@ -106,3 +110,4 @@ else:
         st.title("Select an option")
 
         st.write("Please choose one of the options above to proceed.")
+
