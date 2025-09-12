@@ -36,9 +36,9 @@ def extract_candidate_info(text):
     - Full Name 
     - Email Address 
     - Phone Number 
-    - Years of Experience (calculate months or years from the first position held)
-    - Position(s) (include internship or full-time positions held)
-    - Current Location 
+    - Years of Experience (months or years from the first position held)
+    - Position(s) (include internship or full-time positions/roles held)
+    - Current Location (do not mention unless explicitly mentioned)
     - Tech Stack (include all languages, frameworks, tools, software, libraries mentioned in the resume) 
     Resume Text:
     {text}
@@ -95,6 +95,7 @@ def generate_technical_questions(tech_stack, q_number):
     Do not repeat "first question", "second question", or similar intros — just directly ask the question.
     """
     return call_llama(prompt)
+
 
 
 
