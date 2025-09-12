@@ -96,6 +96,9 @@ else:
                 st.write(generate_resume_review(resume_text, jd))
             else:
                 st.warning("Please enter a Job Description before generating the ATS score.")
+        if st.button("⬅Back"):
+            st.session_state.view_mode = "initial"
+            st.rerun()
     
     # --------------------- Technical System ---------------------
     elif st.session_state.view_mode == "technical":
@@ -130,10 +133,14 @@ else:
             st.subheader("Your Answers:")
             for i, ans in enumerate(st.session_state.answers, 1):
                 st.write(f"Q{i}: {ans}")
+        if st.button("⬅Back"):
+            st.session_state.view_mode = "initial"
+            st.rerun()
     else:
         st.title("Select an option")
 
         st.write("Please choose one of the options above to proceed.")
+
 
 
 
