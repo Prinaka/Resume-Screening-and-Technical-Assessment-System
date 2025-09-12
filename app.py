@@ -90,7 +90,7 @@ else:
                 st.subheader("Results")
                 ats = st.write(generate_ats_score(candidate_info, jd))
                 st.write(f"ATS Score: {ats}")
-                ats_val = int(ats_str.strip().replace("%", ""))
+                ats_val = int(ats.strip().replace("%", ""))
                 st.altair_chart(make_donut(ats_val, "Percentage Match"), use_container_width=False)
                 st.write(generate_resume_review(resume_text, jd))
             else:
@@ -133,6 +133,7 @@ else:
         st.title("Select an option")
 
         st.write("Please choose one of the options above to proceed.")
+
 
 
 
