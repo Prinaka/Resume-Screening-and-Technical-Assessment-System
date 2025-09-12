@@ -97,12 +97,14 @@ else:
             else:
                 st.warning("Please enter a Job Description before generating the ATS score.")
         if st.button("⬅Back"):
+            st.session_state.confirmed = False
             st.session_state.view_mode = "initial"
             st.rerun()
     
     # --------------------- Technical System ---------------------
     elif st.session_state.view_mode == "technical":
         st.title("Technical Assessment")
+        st.write("Navigation is not allowed among questions.")
         
         if "question_number" not in st.session_state:
             st.session_state.question_number = 0
@@ -134,12 +136,14 @@ else:
             for i, ans in enumerate(st.session_state.answers, 1):
                 st.write(f"Q{i}: {ans}")
         if st.button("⬅Back"):
+            st.session_state.confirmed = False
             st.session_state.view_mode = "initial"
             st.rerun()
     else:
         st.title("Select an option")
 
         st.write("Please choose one of the options above to proceed.")
+
 
 
 
