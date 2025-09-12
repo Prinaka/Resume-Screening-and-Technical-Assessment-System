@@ -74,7 +74,9 @@ def generate_ats_score(candidate_info, jd_text):
     prompt = f"""
     You are a skilled ATS (Applicant Tracking System) scanner with a deep understanding of ATS functionality. 
     Your task is to evaluate the resume skills {candidate_info} against the skills mentioned in job description {jd_text} and
-    Output only the overall percentage of match between the resume skills and job description skills. Do not write additional statements.
+    output only the overall percentage of match between the resume skills and job description skills. Round the percentage to 2 decimal places. Output format:
+    "92.67%"
+    Do not write additional statements.
     """
     return call_llama(prompt)
 
@@ -94,6 +96,7 @@ def generate_technical_questions(tech_stack, q_number):
     Do not repeat "first question", "second question", or similar intros — just directly ask the question.
     """
     return call_llama(prompt)
+
 
 
 
