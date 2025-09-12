@@ -70,14 +70,14 @@ else:
         base = pd.DataFrame({"Topic": ['', label], "%": [100 - value, value]})
         bg = pd.DataFrame({"Topic": ['', label], "%": [100, 0]})
         
-        def arc(data, radius=45, corner=25):
+        def arc(data, radius=55, corner=25):
             return alt.Chart(data).mark_arc(innerRadius=radius, cornerRadius=corner).encode(
                 theta="%", color=alt.Color("Topic:N", scale=alt.Scale(domain=[label, ''], range=colors), legend=None)
-            ).properties(width=130, height=130)
+            ).properties(width=150, height=150)
         
         text = alt.Chart(base).mark_text(
-            align='center', color="#29b5e8", font="Lato",
-            fontSize=32, fontWeight=700, fontStyle="italic"
+            align='center', color="white", font="Lato",
+            fontSize=25, fontWeight=700, fontStyle="Bold"
         ).encode(text=alt.value(f"{value} %"))
         
         return arc(bg, corner=20) + arc(base) + text
@@ -134,6 +134,7 @@ else:
         st.title("Select an option")
 
         st.write("Please choose one of the options above to proceed.")
+
 
 
 
