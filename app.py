@@ -36,7 +36,7 @@ if not st.session_state.get("confirmed", False):
 
         if confirm == "Yes":
             st.session_state.confirmed = True
-            st.session_state.resume_text = info
+            st.session_state.resume_text = text
             st.session_state.candidate_info = candidate_info
             st.session_state.tech_stack = candidate_info.get("Tech Stack", "Python")
             st.success("Thank you! Your details are confirmed.")
@@ -89,7 +89,7 @@ else:
         if st.button("Submit"):
             if jd.strip():
                 st.header("Results")
-                ats = generate_ats_score(candidate_info, jd)
+                ats = generate_ats_score(resume_text, jd)
                 st.subheader(f"ATS Score")
                 ats_val = float(ats.strip().replace("%", ""))
                 st.altair_chart(make_donut(ats_val, "Percentage Match"), use_container_width=False)
@@ -134,6 +134,7 @@ else:
         st.title("Select an option")
 
         st.write("Please choose one of the options above to proceed.")
+
 
 
 
