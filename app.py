@@ -88,7 +88,7 @@ else:
         if st.button("Submit"):
             if jd.strip():
                 st.subheader("Results")
-                ats = st.write(generate_ats_score(candidate_info, jd))
+                ats = generate_ats_score(candidate_info, jd)
                 st.write(f"ATS Score: {ats}")
                 ats_val = int(ats.strip().replace("%", ""))
                 st.altair_chart(make_donut(ats_val, "Percentage Match"), use_container_width=False)
@@ -133,6 +133,7 @@ else:
         st.title("Select an option")
 
         st.write("Please choose one of the options above to proceed.")
+
 
 
 
