@@ -3,3 +3,4 @@ PyPDF2
 python-dotenv
 openai
 plotly
+altair
