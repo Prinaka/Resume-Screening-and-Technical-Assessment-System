@@ -14,7 +14,7 @@ def call_llama(prompt):
     response = client.chat.completions.create(
         model="llama-3.1-8b-instant",
         messages=[{"role": "user","content": prompt}],
-        max_tokens=216,
+        max_tokens=512,
         )
     return response.choices[0].message.content
 
@@ -38,7 +38,7 @@ def extract_candidate_info(text):
     - Phone Number 
     - Years of Experience (months or years from the first position held)
     - Position(s) (include internship or full-time positions/roles held)
-    - Current Location (do not mention unless explicitly mentioned)
+    - Current Location 
     - Tech Stack (include all languages, frameworks, tools, software, libraries mentioned in the resume) 
     Resume Text:
     {text}
@@ -95,6 +95,7 @@ def generate_technical_questions(tech_stack, q_number):
     Do not repeat "first question", "second question", or similar intros — just directly ask the question.
     """
     return call_llama(prompt)
+
 
 
 
