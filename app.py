@@ -51,12 +51,17 @@ else:
     candidate_info = st.session_state.candidate_info
     tech_stack = st.session_state.tech_stack
 
-    col1, col2 = st.columns(2)
-    with col1:
+    col1, col2, col3 = st.columns(3)
+    with col3:
+        if st.button("⬅Back"):
+            st.session_state.confirmed = False
+            st.session_state.view_mode = "initial"
+            st.rerun()
+    with col2:
         if st.button("Calculate ATS Score"):
             st.session_state.view_mode = "ats"
             st.rerun()
-    with col2:
+    with col3:
         if st.button("Take Technical Assessment"):
             st.session_state.view_mode = "technical"
             st.rerun()
@@ -96,10 +101,6 @@ else:
                 st.write(generate_resume_review(resume_text, jd))
             else:
                 st.warning("Please enter a Job Description before generating the ATS score.")
-        if st.button("⬅Back"):
-            st.session_state.confirmed = False
-            st.session_state.view_mode = "initial"
-            st.rerun()
     
     # --------------------- Technical System ---------------------
     elif st.session_state.view_mode == "technical":
@@ -135,14 +136,12 @@ else:
             st.subheader("Your Answers:")
             for i, ans in enumerate(st.session_state.answers, 1):
                 st.write(f"Q{i}: {ans}")
-        if st.button("⬅Back"):
-            st.session_state.confirmed = False
-            st.session_state.view_mode = "initial"
-            st.rerun()
+                
     else:
         st.title("Select an option")
 
         st.write("Please choose one of the options above to proceed.")
+
 
 
 
