@@ -47,7 +47,7 @@ if not st.session_state.get("confirmed", False):
 
 else:
     resume_text = st.session_state.resume_text
-    candidate_info = st.session_state.cadidate_info
+    candidate_info = st.session_state.candidate_info
     tech_stack = st.session_state.tech_stack
 
     col1, col2 = st.columns(2)
@@ -133,6 +133,7 @@ else:
         st.title("Select an option")
 
         st.write("Please choose one of the options above to proceed.")
+
 
 
 
