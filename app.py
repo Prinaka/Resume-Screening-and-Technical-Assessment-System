@@ -1,14 +1,12 @@
 import streamlit as st
-import pandas as pd
-import altair as alt
-import plotly.express as px
-from main import extract_text_from_pdf, extract_candidate_info, clean_info, generate_ats_score, generate_resume_review, generate_technical_questions
+from main import extract_text_from_pdf, extract_candidate_info, extract_jd_skills, calculate_ats_score, generate_resume_review, run_assessment
+from helpers import make_donut
 import os
 
 os.environ["PYTHONWATCHDOG"] = "0"
 
 #-------Resume Screening and Technical Assessment System-----------
-st.set_page_config(page_title="TalentScout")
+st.set_page_config(page_title="TalentScout", layout="wide")
 
 if "view_mode" not in st.session_state:
     st.session_state.view_mode = "initial"
@@ -25,20 +23,19 @@ if not st.session_state.get("confirmed", False):
 
     if uploaded_file:
         text = cached_extract_text_from_pdf(uploaded_file)
-        info = extract_candidate_info(text)
-        candidate_info = clean_info(info)
+        resume_text = extract_candidate_info(text)
 
         st.subheader("Candidate Information")
-        for key in candidate_info:
-            st.write(f"**{key}** : {candidate_info[key]}")
+        for key in resume_text:
+            st.write(f"**{key}** : {resume_text[key]}")
 
-        confirm = st.radio("Do you confirm these details are correct?", ["Yes", "No"], index=None)
+        confirm = st.radio("Do you confirm these details are correct?", ["Yes", "No"], label_visibility="collapsed")
 
         if confirm == "Yes":
             st.session_state.confirmed = True
-            st.session_state.resume_text = text
-            st.session_state.candidate_info = candidate_info
-            st.session_state.tech_stack = candidate_info.get("Tech Stack", "Python")
+            st.session_state.text = text
+            st.session_state.resume_text = resume_text
+            st.session_state.tech_stack = resume_text.get("Tech Stack", "Python")
             st.success("Thank you! Your details are confirmed.")
             st.rerun()
 
@@ -47,11 +44,11 @@ if not st.session_state.get("confirmed", False):
             
 
 else:
+    text = st.session_state.text
     resume_text = st.session_state.resume_text
-    candidate_info = st.session_state.candidate_info
     tech_stack = st.session_state.tech_stack
 
-    col1, col2, col3 = st.columns(3)
+    col1, col2, col3, col4 = st.columns([0.5,2,2,2])
     with col1:
         if st.button("⬅Back"):
             st.session_state.confirmed = False
@@ -62,98 +59,36 @@ else:
             st.session_state.view_mode = "ats"
             st.rerun()
     with col3:
-        if st.button("Take Technical Assessment"):
-            st.session_state.view_mode = "technical"
+        if st.button("Assess on Your skills"):
+            st.session_state.view_mode = "technical1"
             st.rerun()
-            
-    def make_donut(value, label):
-        colors = (
-            ['#27AE60', '#12783D'] if value >= 80 else
-            ['#F39C12', '#875A12'] if value >= 50 else
-            ['#E74C3C', '#781F16']
-        )
-        base = pd.DataFrame({"Topic": ['', label], "%": [100 - value, value]})
-        bg = pd.DataFrame({"Topic": ['', label], "%": [100, 0]})
-        
-        def arc(data, radius=85, corner=25):
-            return alt.Chart(data).mark_arc(innerRadius=radius, cornerRadius=corner).encode(
-                theta="%", color=alt.Color("Topic:N", scale=alt.Scale(domain=[label, ''], range=colors), legend=None)
-            ).properties(width=250, height=250)
-        
-        text = alt.Chart(base).mark_text(
-            align='center', color="white", font="Calibri",
-            fontSize=25, fontWeight=700, fontStyle="Bold"
-        ).encode(text=alt.value(f"{value} %"))
-        
-        return arc(bg, corner=20) + arc(base) + text
+    with col4:
+        if st.button("Assess on JD skills"):
+            st.session_state.view_mode = "technical2"
+            st.rerun()
 
     # --------------------- ATS ---------------------
     if st.session_state.view_mode == "ats":
         st.title("ATS Score")
-        jd = st.text_area("Job Description", key="jd", height=200, placeholder="Paste the job description here...")
+        jd = st.text_area("Job Description", key="jd_ats", height=200, placeholder="Paste the job description here...")
         if st.button("Submit"):
-            if jd.strip():
+            if jd:
+                jd_text = extract_jd_skills(jd)
                 st.header("Results")
-                ats = generate_ats_score(resume_text, jd)
+                ats = calculate_ats_score(resume_text, jd_text, text)
                 st.subheader(f"ATS Score")
-                ats_val = float(ats.strip().replace("%", ""))
-                st.altair_chart(make_donut(ats_val, "Percentage Match"), use_container_width=False)
+                st.altair_chart(make_donut(ats, "Percentage Match"), use_container_width=False)
                 st.write(generate_resume_review(resume_text, jd))
             else:
                 st.warning("Please enter a Job Description before generating the ATS score.")
     
-    # --------------------- Technical System ---------------------
-    elif st.session_state.view_mode == "technical":
-        st.title("Technical Assessment")
-        st.write("Navigation is not allowed among questions.")
-        
-        if "question_number" not in st.session_state:
-            st.session_state.question_number = 0
-            st.session_state.answers = []
-        
-        if st.session_state.question_number < 15:
-            q_number = st.session_state.question_number + 1
-            question = generate_technical_questions(tech_stack, q_number)
-            st.subheader(f"Question {q_number}")
-            st.write(question)
-            
-            answer = st.text_area(
-                "Your Answer:",
-                key=f"answer_{q_number}",
-                height=150,
-                placeholder="Type your answer here..."
-            )
-            
-            if st.button("Submit", key=f"submit_{q_number}"):
-                if answer.strip():
-                    st.session_state.answers.append(answer.strip())
-                    st.session_state.question_number += 1
-                    st.rerun()
-                else:
-                    st.warning("Please provide an answer before submitting.")
-        else:
-            st.success("Congratulations! You have completed all the questions.")
-            st.subheader("Your Answers:")
-            for i, ans in enumerate(st.session_state.answers, 1):
-                st.write(f"Q{i}: {ans}")
-                
+    # --------------------- Technical Assessment on Resume ---------------------
+    elif st.session_state.view_mode == "technical1":
+        run_assessment("technical1", tech_stack, prefix="answer", jd_required=False)
+
+    # --------------------- Technical Assessment on JD ---------------------
+    elif st.session_state.view_mode == "technical2":
+        run_assessment("technical2", "Python", prefix="answer_jd", jd_required=True)
     else:
         st.title("Select an option")
-
         st.write("Please choose one of the options above to proceed.")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
