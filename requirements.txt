@@ -4,9 +4,10 @@ python-dotenv
 openai
 groq
 torch
-transformers
+sentence-transformers
 accelerate 
 sentencepiece 
 bitsandbytes
 rapidfuzz
 textstat
+
