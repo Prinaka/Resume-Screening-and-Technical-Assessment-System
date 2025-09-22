@@ -29,7 +29,7 @@ if not st.session_state.get("confirmed", False):
         for key in resume_text:
             st.write(f"**{key}** : {resume_text[key]}")
 
-        confirm = st.radio("Do you confirm these details are correct?", ["Yes", "No"], label_visibility="collapsed")
+        confirm = st.radio("Do you confirm these details are correct?", ["Yes", "No"], index=None)
 
         if confirm == "Yes":
             st.session_state.confirmed = True
@@ -92,3 +92,4 @@ else:
     else:
         st.title("Select an option")
         st.write("Please choose one of the options above to proceed.")
+
