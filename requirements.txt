@@ -2,5 +2,11 @@ streamlit
 PyPDF2
 python-dotenv
 openai
-plotly
-altair
+groq
+torch
+transformers
+accelerate 
+sentencepiece 
+bitsandbytes
+rapidfuzz
+textstat
