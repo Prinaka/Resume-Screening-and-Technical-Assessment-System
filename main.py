@@ -93,6 +93,7 @@ def extract_candidate_info(text):
 
     return parsed
 
+
 def extract_jd_skills(text):
     prompt = f"""
     Extract only the following details correctly from this job description (each in single line):
@@ -114,6 +115,7 @@ def extract_jd_skills(text):
 
     return parsed
 
+
 def check_formatting_issues(text):
     issues = []
     if "education" not in text.lower():
@@ -131,6 +133,7 @@ def check_formatting_issues(text):
         issues.append("Resume too short (<200 words)")
     return issues
 
+
 def readability_score(text):
     score = textstat.flesch_reading_ease(text)
     grade = textstat.flesch_kincaid_grade(text)
@@ -144,7 +147,6 @@ def normalize_skills(extracted_skills):
         if key in SKILL_NORMALIZER:
             normalized.append(SKILL_NORMALIZER[key])
         else:
-            # fuzzy match against known skills
             match, score, _ = process.extractOne(key, SKILL_NORMALIZER.keys())
             if score > 80:
                 normalized.append(SKILL_NORMALIZER[match])
@@ -208,6 +210,7 @@ def calculate_soft_factors(text):
         "Soft Skills": softskills,
     }
 
+
 def calculate_ats_score(resume_text, jd_text, text):
     resume_skills = normalize_skills(resume_text["Tech Stack"].split(", "))
     jd_skills = normalize_skills(jd_text["Tech Stack"].split(", "))
@@ -263,6 +266,25 @@ def generate_technical_questions(tech_stack, q_number):
     return call_llama(prompt)
 
 
+def grade_open_answer(question, answer):
+    prompt = f"""You are an expert technical examiner.
+    Question: {question}
+    Candidate Answer: {answer}
+
+    Task:
+    1. Evaluate if candidate answered correctly.
+    2. Give a score from 0–10.
+    3. Provide 2–3 sentences of feedback.
+
+    Output JSON only:
+    {{
+      "score": <int 0-100>,
+      "feedback": "..."
+    }}
+    """
+    return call_llama(prompt)
+
+
 def run_assessment(mode, tech_stack, prefix="answer", jd_required=False):
     st.title(f"Technical Assessment on {'Resume' if mode=='technical1' else 'JD'}")
     st.write("Navigation is not allowed among questions.")
@@ -276,6 +298,7 @@ def run_assessment(mode, tech_stack, prefix="answer", jd_required=False):
                 st.session_state.jd_text = jd
                 st.session_state.question_number = 0
                 st.session_state.answers = []
+                st.session_state.grades = []
                 st.rerun()
             else:
                 st.warning("Please enter a Job Description before starting the assessment.")
@@ -284,14 +307,15 @@ def run_assessment(mode, tech_stack, prefix="answer", jd_required=False):
     if "question_number" not in st.session_state or st.session_state.question_number is None:
         st.session_state.question_number = 0
         st.session_state.answers = []
+        st.session_state.grades = []
 
-    if st.session_state.question_number < 15:
+    if st.session_state.question_number < 1:
         q_number = st.session_state.question_number + 1
         question = generate_technical_questions(st.session_state.get("tech_stack", tech_stack), q_number)
 
-        st.subheader(f"Question {q_number} of 15")
+        st.subheader(f"Question {q_number} of 1")
         st.write(question)
-
+        
         answer = st.text_area(
             "Your Answer:",
             key=f"{prefix}_{q_number}",
@@ -302,6 +326,8 @@ def run_assessment(mode, tech_stack, prefix="answer", jd_required=False):
         if st.button("Submit", key=f"submit_{prefix}_{q_number}"):
             if answer.strip():
                 st.session_state.answers.append(answer.strip())
+                grade = grade_open_answer(question, answer.strip())
+                st.session_state.grades.append(grade)
                 st.session_state.question_number += 1
                 st.rerun()
             else:
@@ -310,14 +336,20 @@ def run_assessment(mode, tech_stack, prefix="answer", jd_required=False):
     else:
         st.success("Congratulations! You have completed all the questions.")
         st.subheader("Your Answers:")
-        for i, ans in enumerate(st.session_state.answers, 1):
-            st.write(f"Q{i}: {ans}")
 
+        for i, (ans, grade) in enumerate(zip(st.session_state.answers, st.session_state.grades), 1):
+            data = json.loads(grade)
+            st.write(f"""
+            **Q{i} Answer:** {ans}  
+            **Score:** {data["score"]}  
+            **Feedback:** {data["feedback"]}
+            """)
         col1, col2 = st.columns(2)
         with col1:
             if st.button("Retake Assessment", key=f"retake_{mode}"):
                 st.session_state.question_number = 0
                 st.session_state.answers = []
+                st.session_state.grades = []
                 st.rerun()
 
         with col2:
@@ -325,4 +357,5 @@ def run_assessment(mode, tech_stack, prefix="answer", jd_required=False):
                 st.session_state.view_mode = "initial"
                 st.session_state.question_number = None
                 st.session_state.answers = []
+                st.session_state.grades = []
                 st.rerun()
