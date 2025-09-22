@@ -26,11 +26,9 @@ SKILL_NORMALIZER = {
     "SQL Server": "SQL"}
 
 ACTION_VERBS = ["developed", "led", "implemented", "designed", "improved",
-                "analyzed", "managed", "created", "built", "optimized", "implemented"]
-
-IMPACT_WORDS = ["improved", "increased", "reduced", "achieved", "delivered", "saved", "optimized"]
+                "analysed", "managed", "created", "built", "optimised", "implemented"]
+IMPACT_WORDS = ["improved", "increased", "reduced", "achieved", "delivered", "saved", "optimised"]
 RESPONSIBLE_WORDS = ["responsible", "assisted", "helped", "supported", "spearheaded"]
-
 SOFT_SKILLS = ["communication", "teamwork", "leadership", "collaboration",
                "adaptability", "problem solving", "creativity"]
 
@@ -359,3 +357,4 @@ def run_assessment(mode, tech_stack, prefix="answer", jd_required=False):
                 st.session_state.answers = []
                 st.session_state.grades = []
                 st.rerun()
+
