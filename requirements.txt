@@ -1,4 +1,3 @@
-streamlit
 PyPDF2
 python-dotenv
 openai
@@ -6,8 +5,9 @@ groq
 torch
 sentence-transformers
 accelerate 
-sentencepiece 
-bitsandbytes
 rapidfuzz
 textstat
-
+fpdf
+streamlit
+streamlit-option-menu
+streamlit-elements==0.1
