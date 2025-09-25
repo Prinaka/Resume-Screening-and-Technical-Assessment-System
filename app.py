@@ -64,7 +64,7 @@ elif st.session_state.view_mode == "ats":
     uploaded_file = st.file_uploader("Upload your Resume (PDF only)", type="pdf", key="ats_upload")
     jd = st.text_area("Job Description", key="jd_ats", height=200, placeholder="Paste the job description here...")
 
-    if st.button("Submit ATS", key="ats_start"):
+    if st.button("Submit", key="ats_start"):
         if not uploaded_file or not jd:
             st.warning("Please upload a resume and paste the Job Description.")
         else:
@@ -141,4 +141,3 @@ elif st.session_state.view_mode == "technical2":
 
     if "jd_text2" in st.session_state:
         run_assessment("technical2", st.session_state.jd_tech_stack2, prefix="answer_jd")
-
