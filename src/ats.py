@@ -19,13 +19,28 @@ SKILL_NORMALIZER = {
     "SQL Server": "SQL"}
 
 ACTION_VERBS = ["developed", "led", "implemented", "designed", "improved",
-                "analyzed", "managed", "created", "built", "optimized", "implemented"]
+                "analyzed", "managed", "created", "built", "optimized", "engineered",
+                "launched", "collaborated", "initiated", "spearheaded", "deployed",
+                "assembled", "calculated", "computed", "configured", "devised", "fabricated",
+                "maintained", "operated", "pinpointed", "programmed", "remodeled",
+                "repaired"]
 
-IMPACT_WORDS = ["improved", "increased", "reduced", "achieved", "delivered", "saved", "optimized"]
+IMPACT_WORDS = ["improved", "increased", "reduced", "achieved", "delivered",
+                "saved", "optimised", "managed", "generated", "boosted", "enhanced",
+                "accelerated", "accomplished", "attained", "completed", "conceived",
+                "convinced", "discovered", "doubled", "effected", "eliminated", "expanded",
+                "expedited", "founded", "initiated", "innovated", "introduced", "invented",
+                "launched", "mastered", "originated", "overcame", "overhauled", "pioneered",
+                "resolved", "revitalized", "spearheaded", "strengthened", "transformed", "upgraded"]
+
 RESPONSIBLE_WORDS = ["responsible", "assisted", "helped", "supported", "spearheaded"]
 
 SOFT_SKILLS = ["communication", "teamwork", "leadership", "collaboration",
-               "adaptability", "problem solving", "creativity"]
+               "adaptability", "problem solving", "creativity", "work ethic",
+               "time management", "critical thinking", "interpersonal skills",
+               "conflict resolution", "decision making", "empathy", "flexibility"
+               "negotiation", "organization", "patience", "resilience", "self-motivation",
+               "stress management", "active listening", "public speaking", "relationship building"]
 
 
 def check_formatting_issues(text):
@@ -128,7 +143,7 @@ def calculate_ats_score(resume_text, jd_text, text):
     jd_skills = normalize_skills(jd_text["Tech Stack"].split(", "))
 
     matched, missing = semantic_skill_match(resume_skills, jd_skills)
-    skill_score = (len(matched) / len(jd_skills)) * 50
+    skill_score = (len(matched) / len(jd_skills)) * 60
     
     cand_exp = float(resume_text["Years of Experience"])
     jd_exp = float(jd_text["Years of Experience"])
@@ -137,16 +152,16 @@ def calculate_ats_score(resume_text, jd_text, text):
     else:
         exp_score = cand_exp*20
     
-    missing_penalty = (len(missing) / len(jd_skills)) * 10
+    missing_penalty = (len(missing) / len(jd_skills)) * 5
     
     issues = check_formatting_issues(text)
     ease = readability_score(text)["ease"]
     if len(issues) <= 20 and ease <= 50:
-        format_score = ((50-ease)/50 - (len(issues)/20)) * 10
+        format_score = ((50-ease)/50 - (len(issues)/20)) * 5
     elif len(issues) <= 20:
-        format_score = - (len(issues)/20) * 10
+        format_score = - (len(issues)/20) * 5
     elif ease <= 50:
-        format_score = ((50-ease)/50) * 10
+        format_score = ((50-ease)/50) * 5
     else:
         format_score = 2
 
