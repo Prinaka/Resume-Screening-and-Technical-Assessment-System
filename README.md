@@ -2,12 +2,15 @@
 
 Live Demo : https://resume-screening-and-technical-assessment-system.streamlit.app
 
-A Streamlit-based Hiring Assistant Chatbot that leverages Groq’s LLaMA 3.1 model to parse resumes, extract candidate information, generate technical questions based on the candidate's tech stack, and evaluate answers in real-time. This tool is ideal for automating the initial stages of technical recruitment.
+A Streamlit-based Hiring Assistant that leverages:
+* Kimi K2 model to parse resumes, extract relevant details from the resume and job description.
+* LLaMA 3.1 to generate technical questions based on the candidate's tech stack, and evaluate answers in real-time.
+This tool is ideal for assisting candidates in the initial stages of technical recruitment.
 
 **Key Features:**
 
 * PDF Resume Upload: Accepts candidate resumes in PDF format.
-* Resume Parsing: Extracts key candidate details:
+* Resume Parsing: Extracts key candidate details using Kimi K2.
   - Full Name
   - Email Address
   - Phone Number
@@ -15,9 +18,10 @@ A Streamlit-based Hiring Assistant Chatbot that leverages Groq’s LLaMA 3.1 mod
   - Desired Position(s)
   - Current Location
   - Tech Stack (languages, frameworks, libraries, tools)
-* Technical Question Generation: Generates 15 relevant technical questions based on the candidate's tech stack.
-* Answer Evaluation: Evaluates candidate answers for relevance using LLaMA 3 and provides immediate feedback.
-* Interactive Workflow: Confirms candidate information before proceeding to the technical quiz.
+* Interactive Workflow: Confirms candidate information before proceeding further.
+* ATS: Generates ATS score based on skills matched/missing, candidate experience, formatting issues and readability.
+* Technical Question Generation: Generates 5 relevant technical questions based on the candidate's/job's tech stack
+* Answer Evaluation: Evaluates candidate answers for relevance using LLaMA 3 and provides scores and feedback at end of the assessment. The responses can be downloaded as pdf by the candidate.
 
 **Installation:**
 
