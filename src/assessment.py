@@ -9,21 +9,21 @@ def generate_technical_questions(tech_stack, q_number):
     You are an expert technical interviewer. This is question number {q_number}.
     Ask one technical short answer interview question about the given tech stack: {tech_stack} to test understanding.
     Wait for the answer before moving to the next question. Do not ask coding questions.
-    Do not repeat "first question", "second question", or similar intros — just directly ask the question.
+    Output only the question without any additional text.
     """
     return call_llama(prompt)
 
 
 def grade_open_answer(question, answer):
-    prompt = f"""You are an expert technical examiner.
+    prompt = f"""You are an expert technical interviewer.
     Question: {question}
     Candidate Answer: {answer}
 
     Task:
     1. Evaluate if candidate answered correctly. Give partial credit for partially correct answers.
     2. Give no credit for incorrect or irrelevant answers.
-    3. Give a score from 0–100.
-    4. Provide 2–3 sentences of feedback.
+    3. Give a score from 0–100 considering it be an interview setting.
+    4. Provide 2–3 sentences of feedback about the answer, mentioning what was good and what could be improved.
 
     Output JSON only:
     {{
@@ -36,7 +36,6 @@ def grade_open_answer(question, answer):
 
 def run_assessment(mode, tech_stack, prefix="answer"):
     st.title(f"Technical Assessment on {'Resume' if mode=='technical1' else 'JD'}")
-    st.write("Navigation is not allowed among questions.")
 
     if "question_number" not in st.session_state or st.session_state.question_number is None:
         st.session_state.question_number = 0
@@ -82,9 +81,10 @@ def run_assessment(mode, tech_stack, prefix="answer"):
             st.write(f"""
             **Q{i} Score:** {data["score"]}  
             """)
-            with st.expander(f"Feedback & Your Answer"):
+            with st.expander(f"Your Answer & Feedback"):
+                st.write(f"**Answer:**\n\n{ans}")
                 st.write(f"**Feedback:** {data['feedback']}")
-                st.write(f"**Your Answer:**\n\n{ans}")
+                
 
         total_score = sum(json.loads(g)["score"] for g in st.session_state.grades) / len(st.session_state.grades) 
         st.subheader(f"""Total Percentage: **{round(total_score,2)}%**""")
