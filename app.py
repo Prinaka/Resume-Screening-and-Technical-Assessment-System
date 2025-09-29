@@ -87,11 +87,10 @@ elif st.session_state.view_mode == "ats":
             st.warning("Please update your resume or enter corrections manually.")
 
     if st.session_state.get("confirmed", False):
-        print(st.session_state.jd_text)
-        ats = calculate_ats_score(st.session_state.resume_text, st.session_state.jd_text, st.session_state.text)
-        st.subheader("ATS Score")
-        st.altair_chart(make_donut(ats, "Percentage Match"), use_container_width=False)
-        st.write(generate_resume_review(st.session_state.resume_text, jd))
+        resume_text = st.session_state.resume_text
+        jd = st.session_state.jd_text
+        ats, info = calculate_ats_score(st.session_state.resume_text, st.session_state.jd_text, st.session_state.text)
+        ats_dashboard(ats, info, resume_text, jd)
 
 # ----------------- TECHNICAL ASSESSMENT ON RESUME -----------------
 
@@ -141,3 +140,4 @@ elif st.session_state.view_mode == "technical2":
 
     if "jd_text2" in st.session_state:
         run_assessment("technical2", st.session_state.jd_tech_stack2, prefix="answer_jd")
+
