@@ -19,7 +19,7 @@ This tool is ideal for assisting candidates in the initial stages of technical r
   - Current Location
   - Tech Stack (languages, frameworks, libraries, tools)
 * Interactive Workflow: Confirms candidate information before proceeding further.
-* ATS: Generates ATS score based on skills matched/missing, candidate experience, formatting issues and readability.
+* ATS: Generates ATS Resume Review Dashboard based on skills matched/missing, candidate experience, formatting issues and readability.
 * Technical Question Generation: Generates 5 relevant technical questions based on the candidate's/job's tech stack
 * Answer Evaluation: Evaluates candidate answers for relevance using LLaMA 3 and provides scores and feedback at end of the assessment. The responses can be downloaded as pdf by the candidate.
 
