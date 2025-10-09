@@ -231,7 +231,7 @@ def ats_dashboard(ats, info, resume_text, jd):
         st.altair_chart(bar_chart(scores_df,"Score:Q","Component:N"), use_container_width=True)
         
         st.write(f"**Skill match score:** {skill_match:.2f} %")
-        st.write(f"**Experience score:** {soft_score:.2f} %")
+        st.write(f"**Experience score:** {exp_match_score:.2f} %")
         st.write(f"**Format score:** {format_score:.2f} %")
         st.write(f"**Soft skills & clarity score:** {soft_score:.2f} %")
 
@@ -288,3 +288,4 @@ def ats_dashboard(ats, info, resume_text, jd):
 
     st.header("Review Summary")
     st.write(generate_resume_review(resume_text, jd))
+
