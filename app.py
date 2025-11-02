@@ -1,8 +1,8 @@
 import streamlit as st
 from streamlit_option_menu import option_menu
-from src.parser import extract_text_from_pdf, extract_candidate_info, extract_jd_skills
-from src.ats import calculate_ats_score, ats_dashboard
-from src.assessment import run_assessment
+from src.utils.parser import extract_text_from_pdf, extract_candidate_info, extract_jd_skills
+from src.utils.ats import calculate_ats_score, ats_dashboard
+from src.utils.assessment import run_assessment
 
 #-------Resume Screening and Technical Assessment System-----------
 st.set_page_config(page_title="TalentScout", layout="wide")
@@ -139,5 +139,3 @@ elif st.session_state.view_mode == "technical2":
 
     if "jd_text2" in st.session_state:
         run_assessment("technical2", st.session_state.jd_tech_stack2, prefix="answer_jd")
-
-
