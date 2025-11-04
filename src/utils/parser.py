@@ -24,7 +24,17 @@ def extract_candidate_info(text):
     - Years of Experience (give numerical  result)
     - Desired Position(s) 
     - Current Location 
-    - Tech Stack (include all languages, frameworks, tools, software, libraries mentioned in the resume. Also include skills used in internships/projects) 
+    - Tech Stack (include ALL languages, frameworks, models, tools, libraries, AI methods 
+       and acronyms such as LLM, RAG, NLP, GPT, BERT, CNN, SQL, AWS, etc. 
+       Include skills from projects & internships, even if not in tech stack section.)
+
+    **Important parsing rules**
+    - Preserve acronyms exactly (LLM, CNN, NLP, RAG, GPT, SQL etc)
+    - If model names appear (GPT-4, BERT, T5, LLaMA-2), include them
+    - Capture ML/AI keywords from bullet points
+    - Do NOT merge acronyms into vague general skills 
+      (e.g., keep LLM, do not convert to "machine learning" only)
+    - Remove duplicates
     Resume Text:
     {text}
     Answer only the above points each in single sentence. Do not write additional statements. Whole output should be JSON dictionary.
@@ -60,3 +70,4 @@ def extract_jd_skills(text):
 
 
     return parsed
+
