@@ -24,7 +24,7 @@ def extract_candidate_info(text):
     - Years of Experience (give numerical  result)
     - Desired Position(s) 
     - Current Location 
-    - Tech Stack (include all languages, frameworks, tools, software, libraries mentioned in the resume) 
+    - Tech Stack (include all languages, frameworks, tools, software, libraries mentioned in the resume. Also include skills used in internships/projects) 
     Resume Text:
     {text}
     Answer only the above points each in single sentence. Do not write additional statements. Whole output should be JSON dictionary.
@@ -45,7 +45,7 @@ def extract_jd_skills(text):
     Extract only the following details correctly from this job description (each in single line):
     - Years of Experience (give numerical  result)
     - Desired Position(s) 
-    - Tech Stack (include all languages, frameworks, tools, software, libraries mentioned in the resume) 
+    - Tech Stack (include all languages, frameworks, tools, software, libraries mentioned in the job description) 
     Job description Text:
     {text}
     Answer only the above points each in single sentence. Do not write additional statements. Whole output should be JSON dictionary.
@@ -57,5 +57,6 @@ def extract_jd_skills(text):
     except json.JSONDecodeError:
         cleaned = raw_output.strip("` \n").replace("json\n", "")
         parsed = json.loads(cleaned)
+
 
     return parsed
