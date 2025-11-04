@@ -35,5 +35,8 @@
     "GeoPandas": ["geopandas", "geo pandas"],
     "Statsmodels": ["statsmodels", "stats models"],
     "Groq": ["groq", "groqchip", "groq ai acceleration"],
-    "Kaggle": ["kaggle", "kaggle competitions", "kaggle datasets"]
+    "Kaggle": ["kaggle", "kaggle competitions", "kaggle datasets"],
+    "NLP": ["natural language processing", "text processing", "language models", "transformers", "bert", "gpt", "llm"],
+    "LLM": ["large language model", "gpt", "bert", "transformer models", "nlp"],
+    "Transformers": ["attention models", "bert", "gpt", "llm"]
 }
